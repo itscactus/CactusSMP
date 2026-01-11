@@ -433,20 +433,6 @@ border_effects:
   sound_pitch: 1.2
   title_duration_ms: 1000   # Title gösterim süresi
 
-# Davet Sistemi
-invite_system:
-  enabled: true
-  default_expiry_minutes: 10           # Davet geçerlilik süresi
-  auto_trust_duration_minutes: 60      # Kabul edilen davetin geçerlilik süresi
-  max_pending_invites: 5               # Maksimum bekleyen davet sayısı
-
-# Otomatik Claim
-auto_claim:
-  enabled: true
-  radius_discount_multiplier: 0.9      # Radius claim indirimi (%10 indirim)
-  max_radius: 5                        # Maksimum radius
-  min_radius: 1                        # Minimum radius
-
 # Gelişmiş Korumalar
 advanced_protection:
   enabled: true

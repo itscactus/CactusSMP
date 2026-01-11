@@ -27,8 +27,6 @@ public final class Main extends JavaPlugin {
     private TrustManager trustManager;
     private ClaimMarket claimMarket;
     private BorderEffects borderEffects;
-    private InviteManager inviteManager;
-    private AutoClaim autoClaim;
     private ClaimEffects claimEffects;
     private ActivityLogger activityLogger;
     private ClaimBank claimBank;
@@ -57,8 +55,6 @@ public final class Main extends JavaPlugin {
         this.trustManager = new TrustManager(this, database);
         this.claimMarket = new ClaimMarket(this, database);
         this.borderEffects = new BorderEffects(this);
-        this.inviteManager = new InviteManager(this);
-        this.autoClaim = new AutoClaim(this);
         this.claimEffects = new ClaimEffects(this);
         this.activityLogger = new ActivityLogger(this, database);
         this.claimBank = new ClaimBank(this, database, activityLogger);
@@ -103,8 +99,6 @@ public final class Main extends JavaPlugin {
     public TrustManager trustManager() { return trustManager; }
     public ClaimMarket market() { return claimMarket; }
     public BorderEffects borderEffects() { return borderEffects; }
-    public InviteManager inviteManager() { return inviteManager; }
-    public AutoClaim autoClaim() { return autoClaim; }
     public ClaimEffects claimEffects() { return claimEffects; }
     public ActivityLogger activityLogger() { return activityLogger; }
     public ClaimBank claimBank() { return claimBank; }

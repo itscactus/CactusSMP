@@ -52,14 +52,6 @@ public class ClaimCommands implements CommandExecutor, TabCompleter {
                 return handleMarket(player);
             case "buy":
                 return handleBuy(player, args);
-            case "auto":
-                return handleAuto(player);
-            case "invite":
-                return handleInvite(player, args);
-            case "accept":
-                return handleAccept(player, args);
-            case "decline":
-                return handleDecline(player, args);
             case "logs":
                 return handleLogs(player);
             case "effect":
@@ -255,20 +247,6 @@ public class ClaimCommands implements CommandExecutor, TabCompleter {
         return true;
     }
     
-    private boolean handleAuto(Player player) {
-        boolean enabled = plugin.autoClaim().toggle(player.getUniqueId());
-        
-        if (enabled) {
-            player.sendMessage(plugin.messages().getComponent("messages.auto_claim_enabled",
-                "<green>✓ Auto-Claim aktif! Yürüdükçe otomatik claim edilecek.</green>"));
-        } else {
-            player.sendMessage(plugin.messages().getComponent("messages.auto_claim_disabled",
-                "<yellow>Auto-Claim kapatıldı.</yellow>"));
-        }
-        
-        return true;
-    }
-    
     private boolean handleReload(Player player) {
         if (!player.hasPermission("claim.admin.reload")) {
             player.sendMessage(plugin.messages().getComponent("messages.no_permission",
@@ -279,85 +257,6 @@ public class ClaimCommands implements CommandExecutor, TabCompleter {
         plugin.reloadConfig();
         player.sendMessage(plugin.messages().getComponent("messages.config_reloaded",
             "<green>✓ Config yeniden yüklendi!</green>"));
-        return true;
-    }
-    
-    private boolean handleInvite(Player player, String[] args) {
-        if (args.length < 2) {
-            player.sendMessage(plugin.messages().getComponent("messages.invite_usage",
-                "<yellow>Kullanım: /claim invite <oyuncu></yellow>"));
-            return true;
-        }
-        
-        Chunk chunk = player.getLocation().getChunk();
-        ClaimManager.Claim claim = plugin.claims().getClaim(ClaimManager.getChunkKey(chunk));
-        
-        if (claim == null || !claim.getOwner().equals(player.getUniqueId())) {
-            player.sendMessage(plugin.messages().getComponent("messages.not_your_claim",
-                "<red>Bu chunk size ait değil!</red>"));
-            return true;
-        }
-        
-        Player target = plugin.getServer().getPlayer(args[1]);
-        if (target == null) {
-            player.sendMessage(plugin.messages().getComponent("messages.player_not_found",
-                "<red>Oyuncu bulunamadı!</red>"));
-            return true;
-        }
-        
-        plugin.inviteManager().sendInvite(player.getUniqueId(), target.getUniqueId(), 
-            ClaimManager.getChunkKey(chunk), TrustManager.TrustLevel.VISITOR);
-        
-        player.sendMessage(plugin.messages().getComponent("messages.invite_sent",
-            "<green>✓ {player} davet edildi!</green>")
-            .replaceText(b -> b.matchLiteral("{player}").replacement(target.getName())));
-        
-        return true;
-    }
-    
-    private boolean handleAccept(Player player, String[] args) {
-        if (args.length < 2) {
-            player.sendMessage(plugin.messages().getComponent("messages.accept_usage",
-                "<yellow>Kullanım: /claim accept <davet_id></yellow>"));
-            return true;
-        }
-        
-        // Basitleştirilmiş: son daveti kabul et
-        List<InviteManager.Invite> invites = plugin.inviteManager().getPendingInvites(player.getUniqueId());
-        
-        if (invites.isEmpty()) {
-            player.sendMessage(plugin.messages().getComponent("messages.no_invites",
-                "<yellow>Bekleyen davetiniz yok!</yellow>"));
-            return true;
-        }
-        
-        InviteManager.Invite invite = invites.get(0);
-        if (plugin.inviteManager().acceptInvite(player.getUniqueId(), invite.inviteId)) {
-            player.sendMessage(plugin.messages().getComponent("messages.invite_accepted",
-                "<green>✓ Davet kabul edildi!</green>"));
-        } else {
-            player.sendMessage(plugin.messages().getComponent("messages.invite_accept_failed",
-                "<red>Davet kabul edilemedi!</red>"));
-        }
-        
-        return true;
-    }
-    
-    private boolean handleDecline(Player player, String[] args) {
-        List<InviteManager.Invite> invites = plugin.inviteManager().getPendingInvites(player.getUniqueId());
-        
-        if (invites.isEmpty()) {
-            player.sendMessage(plugin.messages().getComponent("messages.no_invites",
-                "<yellow>Bekleyen davetiniz yok!</yellow>"));
-            return true;
-        }
-        
-        InviteManager.Invite invite = invites.get(0);
-        if (plugin.inviteManager().declineInvite(player.getUniqueId(), invite.inviteId)) {
-            player.sendMessage(plugin.messages().getComponent("messages.invite_declined",
-                "<yellow>Davet reddedildi.</yellow>"));
-        }
-        
         return true;
     }
     
@@ -448,12 +347,6 @@ public class ClaimCommands implements CommandExecutor, TabCompleter {
             "<yellow>/claim sell <fiyat></yellow> <gray>- Claim'i satışa çıkar</gray>"));
         player.sendMessage(plugin.messages().getComponent("messages.help_market",
             "<yellow>/claim market</yellow> <gray>- Satılık claim'leri göster</gray>"));
-        player.sendMessage(plugin.messages().getComponent("messages.help_auto",
-            "<yellow>/claim auto</yellow> <gray>- Otomatik claim aç/kapat</gray>"));
-        player.sendMessage(plugin.messages().getComponent("messages.help_radius",
-            "<yellow>/claim radius <1-5></yellow> <gray>- Radius claim yap</gray>"));
-        player.sendMessage(plugin.messages().getComponent("messages.help_invite",
-            "<yellow>/claim invite <oyuncu></yellow> <gray>- Oyuncuyu davet et</gray>"));
         player.sendMessage(plugin.messages().getComponent("messages.help_logs",
             "<yellow>/claim logs</yellow> <gray>- Claim loglarını göster</gray>"));
         player.sendMessage(plugin.messages().getComponent("messages.help_effect",
@@ -476,7 +369,7 @@ public class ClaimCommands implements CommandExecutor, TabCompleter {
     @Override
     public List<String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String[] args) {
         if (args.length == 1) {
-            return Arrays.asList("home", "sethome", "trust", "untrust", "sell", "market", "auto", "radius", "invite", "logs", "effect")
+            return Arrays.asList("home", "sethome", "trust", "untrust", "sell", "market", "logs", "effect")
                 .stream()
                 .filter(s -> s.startsWith(args[0].toLowerCase()))
                 .collect(Collectors.toList());

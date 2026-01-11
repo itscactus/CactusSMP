@@ -121,32 +121,6 @@ border_messages:
   border_entry_wilderness_title: "<gradient:#55ff55:#00ff00>Doğa</gradient>"
   border_entry_wilderness_subtitle: "<gray>Korumasız bölge</gray>"
 
-# Davet Sistemi Mesajları
-invite_messages:
-  invite_sent: "<green>✓ {player} davet edildi!</green>"
-  invite_received: "<gold>✉ {player} sizi claim'ine davet etti!</gold>\n<gray>/claim accept ile kabul et</gray>"
-  invite_accepted: "<green>✓ Davet kabul edildi!</green>"
-  invite_declined: "<yellow>Davet reddedildi.</yellow>"
-  invite_expired: "<yellow>Claim davet süreniz doldu.</yellow>"
-  invite_accept_failed: "<red>Davet kabul edilemedi!</red>"
-  no_invites: "<yellow>Bekleyen davetiniz yok!</yellow>"
-  invite_usage: "<yellow>Kullanım: /claim invite <oyuncu></yellow>"
-  accept_usage: "<yellow>Kullanım: /claim accept</yellow>"
-  max_invites_reached: "<red>Maksimum davet sayısına ulaştınız!</red>"
-
-# Auto Claim Mesajları
-auto_claim_messages:
-  auto_claim_enabled: "<green>✓ Auto-Claim aktif! Yürüdükçe otomatik claim edilecek.</green>"
-  auto_claim_disabled: "<yellow>Auto-Claim kapatıldı.</yellow>"
-  auto_claim_disabled_no_money: "<red>Auto-claim kapatıldı: Yetersiz bakiye!</red>"
-  auto_claim_success: "<green>✓ Chunk otomatik claim edildi! (-{price})</green>"
-  auto_claim_expansion: "<green>✓ Claim genişletildi! (-{price})</green>"
-  radius_claim_success: "<green>✓ {count} chunk claim edildi! (-{price})</green>"
-  radius_claim_insufficient: "<red>Yetersiz bakiye! Gerekli: {price}</red>"
-  radius_claim_none: "<yellow>Tüm chunk'lar zaten claim edilmiş!</yellow>"
-  radius_usage: "<yellow>Kullanım: /claim radius <1-5></yellow>"
-  invalid_radius: "<red>Geçersiz radius! (1-5 arası olmalı)</red>"
-
 # Activity Log Mesajları
 log_messages:
   logs_header: "<gold>===== Claim Logları =====</gold>"
@@ -179,11 +153,6 @@ help_messages:
   help_sell: "<yellow>/claim sell <fiyat></yellow> <gray>- Claim'i satışa çıkar</gray>"
   help_unsell: "<yellow>/claim unsell</yellow> <gray>- Claim'i satıştan kaldır</gray>"
   help_market: "<yellow>/claim market</yellow> <gray>- Satılık claim'leri göster</gray>"
-  help_auto: "<yellow>/claim auto</yellow> <gray>- Otomatik claim aç/kapat</gray>"
-  help_radius: "<yellow>/claim radius <1-5></yellow> <gray>- Radius claim yap</gray>"
-  help_invite: "<yellow>/claim invite <oyuncu></yellow> <gray>- Oyuncuyu davet et</gray>"
-  help_accept: "<yellow>/claim accept</yellow> <gray>- Daveti kabul et</gray>"
-  help_decline: "<yellow>/claim decline</yellow> <gray>- Daveti reddet</gray>"
   help_logs: "<yellow>/claim logs</yellow> <gray>- Claim loglarını göster</gray>"
   help_effect: "<yellow>/claim effect <tip></yellow> <gray>- Claim efekti başlat</gray>"
   help_menu: "<yellow>/claim</yellow> <gray>- Claim menüsünü aç</gray>"
