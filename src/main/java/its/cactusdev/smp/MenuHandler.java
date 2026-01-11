@@ -712,7 +712,7 @@ public class MenuHandler implements Listener {
                 if (option == null) continue;
 
                 int days = option.getInt("days", 1);
-                double price = option.getDouble("price", 10000.0);
+                double price = computeExtendPrice(days, option);
                 Material material = Material.valueOf(option.getString("material", "LIME_DYE"));
                 String name = option.getString("name", "<green>+{days} Gün</green>");
                 List<String> lore = option.getStringList("lore");
@@ -777,7 +777,7 @@ public class MenuHandler implements Listener {
             return;
         }
 
-        double price = option.getDouble("price", 10000.0);
+        double price = computeExtendPrice(days, option);
         if (Main.get().economy().withdrawPlayer(p, price).transactionSuccess()) {
             long extendMillis = days * 24L * 60L * 60L * 1000L;
             claims.extendClaim(chunk, extendMillis);
@@ -786,6 +786,21 @@ public class MenuHandler implements Listener {
         } else {
             p.sendMessage(messages.getComponent("messages.insufficient_funds", "<red>Yetersiz bakiye.</red>"));
         }
+    }
+
+    private double computeExtendPrice(int days, ConfigurationSection option) {
+        boolean dynamic = plugin.getConfig().getBoolean("extend.dynamic_pricing.enabled", false);
+        if (dynamic) {
+            double basePerDay = plugin.getConfig().getDouble("extend.dynamic_pricing.base_price_per_day",
+                plugin.getConfig().getDouble("prices.extend", 250.0));
+            double perDayMultiplier = plugin.getConfig().getDouble("extend.dynamic_pricing.multiplier_per_day", 0.05);
+            double maxMultiplier = plugin.getConfig().getDouble("extend.dynamic_pricing.max_multiplier", 3.0);
+            double multiplier = 1.0 + Math.max(0, days - 1) * perDayMultiplier;
+            if (multiplier > maxMultiplier) multiplier = maxMultiplier;
+            return basePerDay * days * multiplier;
+        }
+        return option != null ? option.getDouble("price", plugin.getConfig().getDouble("prices.extend", 250.0) * days)
+                               : plugin.getConfig().getDouble("prices.extend", 250.0) * days;
     }
 
     private void openMembers(Player p) {

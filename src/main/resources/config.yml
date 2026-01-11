@@ -22,6 +22,11 @@ claim:
 
 # Süre uzatma seçenekleri
 extend:
+  dynamic_pricing:
+    enabled: true
+    base_price_per_day: 250.0          # Günlük taban fiyat
+    multiplier_per_day: 0.05           # Her ekstra gün için çarpan artışı (0.05 = %5)
+    max_multiplier: 3.0                # Maksimum çarpan
   options:
     "1":
       days: 1
