@@ -1,0 +1,482 @@
+# CactusSMP Chunk Claim Ayarları
+
+prices:
+  # /claim menüsünden ilk chunk satın alma ücreti
+  claim: 1000.0
+  # /claim menüsünden süre uzatma ücreti
+  extend: 250.0
+  # Yükseltme haritasında (5x5 grid) komşu chunk fiyatı tabanı
+  # Nihai fiyat: base * ManhattanMesafesi (1. halka = base, 2. halka = base*2, ...)
+  upgrade_base: 10000.0
+  # Dinamik fiyatlandırma - Sahip olunan chunk sayısına göre fiyat artışı
+  dynamic_pricing:
+    enabled: true
+    price_increase_per_chunk: 0.1  # Her chunk için %10 artış (0.1 = %10, 0.2 = %20)
+    max_multiplier: 5.0             # Maksimum fiyat çarpanı (5.0 = 5 kat)
+
+# Claim süresi (milisaniye cinsinden)
+# 30 gün = 30 * 24 * 60 * 60 * 1000 = 2592000000
+claim:
+  duration_days: 30
+  duration_millis: 2592000000
+
+# Süre uzatma seçenekleri
+extend:
+  options:
+    "1":
+      days: 1
+      price: 10000.0
+      material: LIME_DYE
+      custom_model_data: 0
+      name: "<green>+1 Gün</green>"
+      lore:
+        - "<gray>Fiyat: <yellow>{price} TL</yellow></gray>"
+    "10":
+      days: 10
+      price: 80000.0
+      material: GOLD_INGOT
+      custom_model_data: 0
+      name: "<gold>+10 Gün</gold>"
+      lore:
+        - "<gray>Fiyat: <yellow>{price} TL</yellow></gray>"
+        - "<gray><italic>İndirimli paket!</italic></gray>"
+    "30":
+      days: 30
+      price: 180000.0
+      material: DIAMOND
+      custom_model_data: 0
+      name: "<aqua>+30 Gün</aqua>"
+      lore:
+        - "<gray>Fiyat: <yellow>{price} TL</yellow></gray>"
+        - "<gray><italic>En iyi değer!</italic></gray>"
+
+preview:
+  duration_seconds: 30
+
+# Claim Taşı Ayarları
+claim_stone:
+  # Claim taşı sistemi aktif mi?
+  enabled: true
+  # Hologram yüksekliği (bedrock'un üstünden)
+  hologram_height: 2.5
+  # Hologram satırları (MiniMessage formatında)
+  # Placeholder'lar: {owner}, {world}, {x}, {z}, {time}, {created}, {name}
+  hologram_lines:
+    - "<yellow><bold>{name}</bold></yellow>"
+    - "<green>Sahibi: <white>{owner}</white></green>"
+    - "<blue>Konum: <white>{world} ({x},{z})</white></blue>"
+    - "<gold>Kalan Süre: <white>{time}</white></gold>"
+    - "<gray>Oluşturma: <white>{created}</white></gray>"
+
+# Menü Yapılandırması
+# MiniMessage formatı kullanılır: <color>, <bold>, <italic>, vb.
+# Placeholder'lar: {price}, {owner}, {world}, {x}, {z}, {time}, {status}
+menus:
+  # Claim dışındayken açılan menü
+  main:
+    size: 27
+    title: "<gradient:#00ff00:#00aa00><bold>Claim Menüsü</bold></gradient>"
+    items:
+      4:
+        material: BOOK
+        custom_model_data: 0
+        name: "<yellow>ℹ Claim Bilgisi</yellow>"
+        lore:
+          - "<gray>─────────────────</gray>"
+          - "<gray>Detayları görüntüle</gray>"
+          - "<gray>Konum: <white>{world} ({x},{z})</white></gray>"
+          - "<gray>Sahibi: <white>{owner}</white></gray>"
+          - "<gray>─────────────────</gray>"
+        action: info
+      6:
+        material: ENDER_EYE
+        custom_model_data: 0
+        name: "<aqua>👁 Önizleme Aç</aqua>"
+        lore:
+          - "<gray>─────────────────</gray>"
+          - "<gray>Süre: <white>{preview_seconds} sn</white></gray>"
+          - "<gray>Chunk sınırlarını gör</gray>"
+          - "<gray>─────────────────</gray>"
+        action: preview
+        preview_off_material: BARRIER
+        preview_off_custom_model_data: 0
+        preview_off_name: "<red>👁 Önizleme Kapat</red>"
+        preview_off_lore:
+          - "<gray>─────────────────</gray>"
+          - "<gray>Süre: <white>{preview_seconds} sn</white></gray>"
+          - "<gray>Chunk sınırları gizle</gray>"
+          - "<gray>─────────────────</gray>"
+      10:
+        material: GRASS_BLOCK
+        custom_model_data: 0
+        name: "<green><bold>✓ Chunk Al</bold></green>"
+        lore:
+          - "<gray>Ücret: <yellow>{claim_price} TL</yellow></gray>"
+          - "<gray>Dünya: <white>{world}</white></gray>"
+          - "<gray>Konum: <white>{x},{z}</white></gray>"
+          - "<gray>─────────────────</gray>"
+          - "<aqua>» Tıkla ve isim ver!</aqua>"
+        action: buy
+      22:
+        material: BARRIER
+        custom_model_data: 0
+        name: "<red>✖ Kapat</red>"
+        lore: []
+        action: close
+
+  # Claim sahibiyken açılan menü
+  claim_owner:
+    size: 27
+    title: "<gold><bold>★ {claim_name} ★</bold></gold>"
+    items:
+      4:
+        material: DIAMOND
+        custom_model_data: 0
+        name: "<yellow><bold>{claim_name}</bold></yellow>"
+        lore:
+          - "<gray>─────────────────</gray>"
+          - "<green>✓ Bu arazi size ait!</green>"
+          - "<gray>Toplam Arazi: <white>{chunks} Chunk</white></gray>"
+          - "<gray>Kalan Süre: <white>{days_left} Gün</white></gray>"
+          - "<gray>─────────────────</gray>"
+      10:
+        material: CLOCK
+        custom_model_data: 0
+        name: "<gold>⌚ Süre Uzat</gold>"
+        lore:
+          - "<gray>─────────────────</gray>"
+          - "<gray>Süre uzatma seçenekleri</gray>"
+          - "<gray>Mevcut: <white>{days_left} gün</white></gray>"
+          - "<gray>─────────────────</gray>"
+          - "<aqua>» Tıkla!</aqua>"
+        action: extend_menu
+      11:
+        material: GOLD_INGOT
+        custom_model_data: 0
+        name: "<yellow>💰 Claim Bankası</yellow>"
+        lore:
+          - "<gray>─────────────────</gray>"
+          - "<gray>Para yatır / çek</gray>"
+          - "<gray>İşlem geçmişini gör</gray>"
+          - "<gray>─────────────────</gray>"
+          - "<gold>» Tıkla!</gold>"
+        action: bank
+      12:
+        material: PLAYER_HEAD
+        custom_model_data: 0
+        name: "<blue>👥 Üye Yönetimi</blue>"
+        lore:
+          - "<gray>─────────────────</gray>"
+          - "<gray>Üye ekle / çıkar</gray>"
+          - "<gray>Yetkileri düzenle</gray>"
+          - "<gray>─────────────────</gray>"
+          - "<aqua>» Tıkla!</aqua>"
+        action: members
+      13:
+        material: BOOK
+        custom_model_data: 0
+        name: "<aqua>📜 Claim Kayıtları</aqua>"
+        lore:
+          - "<gray>─────────────────</gray>"
+          - "<gray>Bank, üye, ayar</gray>"
+          - "<gray>ve home loglarını gör</gray>"
+          - "<gray>─────────────────</gray>"
+          - "<aqua>» Tıkla!</aqua>"
+        action: logs
+      14:
+        material: RED_BED
+        custom_model_data: 0
+        name: "<green>🏠 Home Yönetimi</green>"
+        lore:
+          - "<gray>─────────────────</gray>"
+          - "<gray>Birden fazla home oluştur</gray>"
+          - "<gray>Işınlan veya sil</gray>"
+          - "<gray>─────────────────</gray>"
+          - "<green>» Tıkla!</green>"
+        action: homes
+      15:
+        material: REDSTONE_TORCH
+        custom_model_data: 0
+        name: "<red>⚙ Ayarlar</red>"
+        lore:
+          - "<gray>İzinleri düzenle</gray>"
+          - ""
+          - "<aqua>» Tıkla!</aqua>"
+        action: settings
+      16:
+        material: MAP
+        custom_model_data: 0
+        name: "<purple>🗺 Yükseltme Haritası</purple>"
+        lore:
+          - "<gray>Yakın chunkları gör ve satın al</gray>"
+          - ""
+          - "<aqua>» Tıkla!</aqua>"
+        action: upgrade_map
+      22:
+        material: BARRIER
+        custom_model_data: 0
+        name: "<red>✖ Kapat</red>"
+        lore: []
+        action: close
+
+  # Başkasının claim'indeyken açılan menü  
+  claim_visitor:
+    size: 27
+    title: "<gray>{claim_name} - {owner}</gray>"
+    items:
+      13:
+        material: PAPER
+        custom_model_data: 0
+        name: "<yellow>📋 Claim Bilgisi</yellow>"
+        lore:
+          - "<gray>─────────────────</gray>"
+          - "<gray>Arazi İsmi: <white>{claim_name}</white></gray>"
+          - "<gray>Sahibi: <white>{owner}</white></gray>"
+          - "<gray>Üye Durumu: <white>{is_member}</white></gray>"
+          - "<gray>─────────────────</gray>"
+          - ""
+          - "<red>Bu arazi size ait değil!</red>"
+      22:
+        material: BARRIER
+        custom_model_data: 0
+        name: "<red>✖ Kapat</red>"
+        lore: []
+        action: close
+
+  info:
+    size: 27
+    title: "<yellow>Claim Bilgisi</yellow>"
+    items:
+      13:
+        material: PAPER
+        custom_model_data: 0
+        name: "<yellow>Claim Bilgisi</yellow>"
+        lore:
+          - "<gray>Sahibi: <white>{owner}</white></gray>"
+          - "<gray>Konum: <white>{world} ({x},{z})</white></gray>"
+          - "<gray>Kalan: <green>{time}</green></gray>"
+          - "<gray>İzinler: <white>PvP={pvp} EXP={explosions} INT={interact} DOOR={doors}</white></gray>"
+          - "<gray>Oluşturma: <white>{created}</white></gray>"
+        not_claimed_material: PAPER
+        not_claimed_custom_model_data: 0
+        not_claimed_name: "<red>Claim Bilgisi</red>"
+        not_claimed_lore:
+          - "<red>Bu chunk size ait değil.</red>"
+
+  members:
+    size: 27
+    title: "<blue>Üye Yönetimi</blue>"
+    items:
+      10:
+        material: LIME_DYE
+        custom_model_data: 0
+        name: "<green>Üye Ekle</green>"
+        lore:
+          - "<gray>İsim girilecek</gray>"
+        action: add_member
+      12:
+        material: RED_DYE
+        custom_model_data: 0
+        name: "<red>Üye Çıkar</red>"
+        lore:
+          - "<gray>İsim girilecek</gray>"
+        action: remove_member
+
+  settings:
+    size: 27
+    title: "<red>Claim Ayarları</red>"
+    items:
+      10:
+        material: IRON_SWORD
+        custom_model_data: 0
+        name: "<yellow>PvP: {pvp_status}</yellow>"
+        lore:
+          - "<gray>Tıkla değiştir</gray>"
+        action: toggle_pvp
+        status_on: "<green>Açık</green>"
+        status_off: "<red>Kapalı</red>"
+      12:
+        material: OAK_DOOR
+        custom_model_data: 0
+        name: "<gold>Kapılar: {doors_status}</gold>"
+        lore:
+          - "<gray>Misafirler kapı açabilsin mi?</gray>"
+          - "<gray>Tıkla değiştir</gray>"
+        action: toggle_doors
+        status_on: "<green>Açık</green>"
+        status_off: "<red>Kapalı</red>"
+      14:
+        material: REPEATER
+        custom_model_data: 0
+        name: "<blue>Etkileşim: {interact_status}</blue>"
+        lore:
+          - "<gray>Düğme, kol, sandık vb.</gray>"
+          - "<gray>Tıkla değiştir</gray>"
+        action: toggle_interact
+        status_on: "<green>Açık</green>"
+        status_off: "<red>Kapalı</red>"
+      16:
+        material: TNT
+        custom_model_data: 0
+        name: "<red>Patlamalar: {explosions_status}</red>"
+        lore:
+          - "<gray>TNT, Creeper vb.</gray>"
+          - "<gray>Tıkla değiştir</gray>"
+        action: toggle_explosions
+        status_on: "<green>Açık</green>"
+        status_off: "<red>Kapalı</red>"
+      22:
+        material: ARROW
+        custom_model_data: 1001
+        name: "<gray>← Geri Dön</gray>"
+        lore:
+          - "<gray>Ana menüye dön</gray>"
+        action: back
+
+  extend:
+    size: 27
+    title: "<gold>Süre Uzatma</gold>"
+    items:
+      back:
+        material: ARROW
+        custom_model_data: 1001
+        name: "<gray>Geri Dön</gray>"
+        lore:
+          - "<gray>Ana menüye dön</gray>"
+
+  upgrade:
+    size: 45
+    title: "<purple>Claim Yükseltme</purple>"
+    items:
+      center:
+        material: GOLD_BLOCK
+        custom_model_data: 0
+        name: "<gold>Merkez</gold>"
+        lore:
+          - "<gray>{x},{z}</gray>"
+      owned:
+        material: LIME_STAINED_GLASS_PANE
+        custom_model_data: 0
+        name: "<green>Sizde</green>"
+        lore:
+          - "<gray>{x},{z}</gray>"
+      taken:
+        material: RED_STAINED_GLASS_PANE
+        custom_model_data: 0
+        name: "<red>Dolu</red>"
+        lore:
+          - "<gray>Sahibi: <white>{owner}</white></gray>"
+      available:
+        material: WHITE_STAINED_GLASS_PANE
+        custom_model_data: 0
+        name: "<green>Satın Al</green>"
+        lore:
+          - "<gray>Ücret: <yellow>{price}</yellow></gray>"
+          - "<gray>{x},{z}</gray>"
+      unavailable:
+        material: RED_STAINED_GLASS_PANE
+        custom_model_data: 0
+        name: "<red>Alınamaz</red>"
+        lore:
+          - "<red>Komşuluk yok</red>"
+
+# ========================================
+# YENİ SİSTEMLER
+# ========================================
+
+# Claim Home Sistemi
+claim_home:
+  enabled: true
+  cooldown_seconds: 60      # Home kullanma arasındaki bekleme süresi
+  warmup_seconds: 3         # Işınlanma öncesi hazırlık süresi
+  cancel_on_move: true      # Hareket ederse iptal edilsin mi?
+  movement_threshold: 0.5   # Kaç blok hareket ederse iptal olur
+
+# Trust/İzin Sistemi  
+trust_system:
+  enabled: true
+  default_level: "VISITOR"  # VISITOR, BUILDER, MANAGER
+  levels:
+    visitor:
+      display_name: "<gray>Ziyaretçi</gray>"
+      permissions:
+        - "claim.visit"
+    builder:
+      display_name: "<green>İnşaatçı</green>"
+      permissions:
+        - "claim.visit"
+        - "claim.build"
+        - "claim.break"
+    manager:
+      display_name: "<gold>Yönetici</gold>"
+      permissions:
+        - "claim.visit"
+        - "claim.build"
+        - "claim.break"
+        - "claim.settings"
+
+# Claim Market Sistemi
+claim_market:
+  enabled: true
+  listing_fee_percent: 5.0  # Satış komisyonu (%)
+  tax_percent: 0.0          # Devlet vergisi (%)
+  min_price: 100.0          # Minimum satış fiyatı
+  max_price: 1000000.0      # Maximum satış fiyatı
+
+# Sınır Efektleri
+border_effects:
+  enabled: true
+  show_title: true          # Chunk geçişinde title göster
+  play_sound: true          # Ses efekti oynat
+  sound_type: "ENTITY_EXPERIENCE_ORB_PICKUP"
+  sound_volume: 0.7
+  sound_pitch: 1.2
+  title_duration_ms: 1000   # Title gösterim süresi
+
+# Davet Sistemi
+invite_system:
+  enabled: true
+  default_expiry_minutes: 10           # Davet geçerlilik süresi
+  auto_trust_duration_minutes: 60      # Kabul edilen davetin geçerlilik süresi
+  max_pending_invites: 5               # Maksimum bekleyen davet sayısı
+
+# Otomatik Claim
+auto_claim:
+  enabled: true
+  radius_discount_multiplier: 0.9      # Radius claim indirimi (%10 indirim)
+  max_radius: 5                        # Maksimum radius
+  min_radius: 1                        # Minimum radius
+
+# Gelişmiş Korumalar
+advanced_protection:
+  enabled: true
+  default_settings:
+    allow_mob_spawn: true       # Mob spawn'ına izin ver
+    allow_fire_spread: false    # Ateş yayılmasına izin ver
+    allow_crop_growth: true     # Ekin büyümesine izin ver
+    allow_leaf_decay: true      # Yaprak dökülmesine izin ver
+    allow_mob_grief: false      # Mob griefing'e izin ver
+    allow_fluid_flow: true      # Sıvı akışına izin ver
+
+# Claim Efektleri
+claim_effects:
+  enabled: true
+  particle_type: "FLAME"      # FLAME, HEART, ENCHANT, PORTAL, etc.
+  density: 5                  # Particle yoğunluğu
+  height: 3.0                 # Efekt yüksekliği
+  speed: 0.02                 # Animasyon hızı
+  available_effects:
+    - "SPIRAL"
+    - "HELIX"
+    - "RING"
+    - "FOUNTAIN"
+    - "PULSE"
+
+# Aktivite Loglama
+activity_log:
+  enabled: true
+  retention_days: 30          # Log saklama süresi
+  log_break: true             # Block kırılmasını logla
+  log_place: true             # Block yerleştirilmesini logla
+  log_interact: false         # Etkileşimleri logla
+  max_entries_per_claim: 1000 # Claim başına maksimum log sayısı"

@@ -1,0 +1,15 @@
+name: CactusSMP
+version: 1.0.0
+main: its.cactusdev.smp.Main
+api-version: '1.21'
+author: cactusdev
+website: https://example.com
+
+permissions:
+  cactus.claim:
+    default: true
+dependencies:
+  server:
+    Vault:
+      load: BEFORE
+      required: false
