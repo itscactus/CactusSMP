@@ -1,5 +1,7 @@
-package its.cactusdev.smp;
+package its.cactusdev.smp.features;
 
+import its.cactusdev.smp.Main;
+import its.cactusdev.smp.data.Database;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;

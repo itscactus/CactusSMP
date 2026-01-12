@@ -1,5 +1,8 @@
-package its.cactusdev.smp;
+package its.cactusdev.smp.features;
 
+import its.cactusdev.smp.Main;
+import its.cactusdev.smp.data.Database;
+import its.cactusdev.smp.utils.ActivityLogger;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 

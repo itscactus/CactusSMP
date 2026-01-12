@@ -1,5 +1,7 @@
-package its.cactusdev.smp;
+package its.cactusdev.smp.managers;
 
+import its.cactusdev.smp.Main;
+import its.cactusdev.smp.utils.Messages;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;

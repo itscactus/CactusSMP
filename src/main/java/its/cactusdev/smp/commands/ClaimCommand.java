@@ -1,5 +1,6 @@
-package its.cactusdev.smp;
+package its.cactusdev.smp.commands;
 
+import its.cactusdev.smp.menus.MenuHandler;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;

@@ -1,5 +1,8 @@
-package its.cactusdev.smp;
+package its.cactusdev.smp.listeners;
 
+import its.cactusdev.smp.Main;
+import its.cactusdev.smp.managers.ClaimManager;
+import its.cactusdev.smp.utils.ActivityLogger;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.Material;

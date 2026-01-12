@@ -1,5 +1,7 @@
-package its.cactusdev.smp;
+package its.cactusdev.smp.features;
 
+import its.cactusdev.smp.Main;
+import its.cactusdev.smp.managers.ClaimManager;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;

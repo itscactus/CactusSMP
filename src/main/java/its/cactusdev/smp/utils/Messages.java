@@ -1,5 +1,6 @@
-package its.cactusdev.smp;
+package its.cactusdev.smp.utils;
 
+import its.cactusdev.smp.Main;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.configuration.file.FileConfiguration;

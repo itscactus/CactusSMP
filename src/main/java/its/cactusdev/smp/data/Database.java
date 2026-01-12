@@ -1,4 +1,4 @@
-package its.cactusdev.smp;
+package its.cactusdev.smp.data;
 
 import org.bukkit.plugin.java.JavaPlugin;
 

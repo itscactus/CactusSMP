@@ -1,5 +1,8 @@
-package its.cactusdev.smp;
+package its.cactusdev.smp.features;
 
+import its.cactusdev.smp.Main;
+import its.cactusdev.smp.data.Database;
+import its.cactusdev.smp.managers.ClaimManager;
 import org.bukkit.entity.Player;
 
 import java.sql.PreparedStatement;

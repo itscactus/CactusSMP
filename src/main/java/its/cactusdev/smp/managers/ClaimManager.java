@@ -1,5 +1,8 @@
-package its.cactusdev.smp;
+package its.cactusdev.smp.managers;
 
+import its.cactusdev.smp.Main;
+import its.cactusdev.smp.data.Database;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 
@@ -91,7 +94,10 @@ public class ClaimManager {
         Claim c = getClaimAt(chunk);
         if (c == null) return false;
         c.setExpiresAt(c.getExpiresAt() + extendMillis);
-        db.updateExpiry(c.getChunkKey(), c.getExpiresAt());
+        
+        String key = c.getChunkKey();
+        long expiry = c.getExpiresAt();
+        Bukkit.getScheduler().runTaskAsynchronously(Main.get(), () -> db.updateExpiry(key, expiry));
         return true;
     }
 
@@ -111,20 +117,28 @@ public class ClaimManager {
         List<String> expired = db.fetchExpiredChunkKeys(now);
         for (String key : expired) {
             cache.remove(key);
-            db.deleteClaim(key);
+            Bukkit.getScheduler().runTaskAsynchronously(Main.get(), () -> db.deleteClaim(key));
         }
     }
 
     public void addMember(Chunk chunk, UUID uuid) {
         Claim c = getClaimAt(chunk);
         if (c == null) return;
-        if (c.getMembers().add(uuid)) db.addMember(c.getChunkKey(), uuid.toString());
+        if (c.getMembers().add(uuid)) {
+            String key = c.getChunkKey();
+            String u = uuid.toString();
+            Bukkit.getScheduler().runTaskAsynchronously(Main.get(), () -> db.addMember(key, u));
+        }
     }
 
     public void removeMember(Chunk chunk, UUID uuid) {
         Claim c = getClaimAt(chunk);
         if (c == null) return;
-        if (c.getMembers().remove(uuid)) db.removeMember(c.getChunkKey(), uuid.toString());
+        if (c.getMembers().remove(uuid)) {
+            String key = c.getChunkKey();
+            String u = uuid.toString();
+            Bukkit.getScheduler().runTaskAsynchronously(Main.get(), () -> db.removeMember(key, u));
+        }
     }
 
     public void updateFlags(Chunk chunk, boolean explosions, boolean pvp, boolean interact, boolean openDoors) {
@@ -134,7 +148,10 @@ public class ClaimManager {
         c.setAllowPvp(pvp);
         c.setAllowInteract(interact);
         c.setAllowOpenDoors(openDoors);
-        db.updateFlags(c.getChunkKey(), explosions, pvp, interact, openDoors);
+        
+        String key = c.getChunkKey();
+        Bukkit.getScheduler().runTaskAsynchronously(Main.get(), () -> 
+            db.updateFlags(key, explosions, pvp, interact, openDoors));
     }
 
     public boolean hasAnyClaim(UUID owner) {
@@ -165,10 +182,16 @@ public class ClaimManager {
         d.allowOpenDoors = c.isAllowOpenDoors();
         d.createdAt = c.getCreatedAt();
         d.claimName = c.getClaimName();
-        db.upsertClaim(d);
-    }
+        // Advanced protection
+        d.allowMobSpawn = c.isAllowMobSpawn();
+        d.allowFireSpread = c.isAllowFireSpread();
+        d.allowCropGrowth = c.isAllowCropGrowth();
+        d.allowLeafDecay = c.isAllowLeafDecay();
+        d.allowMobGrief = c.isAllowMobGrief();
+        d.allowFluidFlow = c.isAllowFluidFlow();
 
-    public Collection<Claim> getAllClaims() { return cache.values(); }
+        Bukkit.getScheduler().runTaskAsynchronously(Main.get(), () -> db.upsertClaim(d));
+    }
 
     /**
      * Verilen chunk'ın ait olduğu claim grubunun ana chunk'ını döndürür.
@@ -214,6 +237,10 @@ public class ClaimManager {
         return connectedClaims.stream()
                 .min(Comparator.comparingLong(Claim::getCreatedAt))
                 .orElse(startClaim);
+    }
+
+    public Collection<Claim> getAllClaims() {
+        return Collections.unmodifiableCollection(cache.values());
     }
 
     public static class Claim {

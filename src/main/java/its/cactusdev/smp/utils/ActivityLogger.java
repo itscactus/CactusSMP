@@ -1,5 +1,8 @@
-package its.cactusdev.smp;
+package its.cactusdev.smp.utils;
 
+import its.cactusdev.smp.Main;
+import its.cactusdev.smp.data.Database;
+import its.cactusdev.smp.managers.ClaimManager;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;

@@ -1,5 +1,6 @@
-package its.cactusdev.smp;
+package its.cactusdev.smp.listeners;
 
+import its.cactusdev.smp.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;

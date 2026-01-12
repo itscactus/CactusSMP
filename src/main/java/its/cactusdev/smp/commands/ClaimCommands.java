@@ -1,5 +1,7 @@
-package its.cactusdev.smp;
+package its.cactusdev.smp.commands;
 
+import its.cactusdev.smp.Main;
+import its.cactusdev.smp.managers.ClaimManager;
 import org.bukkit.Chunk;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;

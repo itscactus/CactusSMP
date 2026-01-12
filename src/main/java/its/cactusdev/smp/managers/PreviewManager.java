@@ -1,5 +1,6 @@
-package its.cactusdev.smp;
+package its.cactusdev.smp.managers;
 
+import its.cactusdev.smp.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Color;
