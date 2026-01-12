@@ -1,7 +1,11 @@
 package its.cactusdev.smp.commands;
 
 import its.cactusdev.smp.Main;
+import its.cactusdev.smp.features.ClaimEffects;
 import its.cactusdev.smp.managers.ClaimManager;
+import its.cactusdev.smp.managers.TrustManager;
+import its.cactusdev.smp.utils.ActivityLogger;
+
 import org.bukkit.Chunk;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
