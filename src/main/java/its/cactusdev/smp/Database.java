@@ -6,6 +6,8 @@ import java.io.File;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
 
 public class Database {
     private final JavaPlugin plugin;
@@ -221,6 +223,22 @@ public class Database {
             throw new RuntimeException(e);
         }
         return list;
+    }
+
+    public Map<String, List<String>> fetchAllMembers() {
+        Map<String, List<String>> map = new HashMap<>();
+        String sql = "SELECT chunk_key, member_uuid FROM members";
+        try (Statement st = connection.createStatement();
+             ResultSet rs = st.executeQuery(sql)) {
+            while (rs.next()) {
+                String k = rs.getString("chunk_key");
+                String m = rs.getString("member_uuid");
+                map.computeIfAbsent(k, x -> new ArrayList<>()).add(m);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return map;
     }
 
     public List<String> fetchMembers(String chunkKey) {

@@ -55,8 +55,15 @@ public class ProtectionListener implements Listener {
     public void onInteract(PlayerInteractEvent e) {
         if (e.getAction() == Action.PHYSICAL && e.getClickedBlock() == null) return;
         Player p = e.getPlayer();
-        Location loc = e.getInteractionPoint() != null ? e.getInteractionPoint() : p.getLocation();
-        Chunk c = loc.getChunk();
+        
+        Chunk c;
+        if (e.getClickedBlock() != null) {
+            c = e.getClickedBlock().getChunk();
+        } else {
+            Location loc = e.getInteractionPoint() != null ? e.getInteractionPoint() : p.getLocation();
+            c = loc.getChunk();
+        }
+
         ClaimManager.Claim claim = claimManager.getClaimAt(c);
         if (claim == null) return;
         boolean isOwner = claim.getOwner().equals(p.getUniqueId());
@@ -84,9 +91,12 @@ public class ProtectionListener implements Listener {
 
     @EventHandler
     public void onExplode(EntityExplodeEvent e) {
-        Chunk c = e.getLocation().getChunk();
-        ClaimManager.Claim claim = claimManager.getClaimAt(c);
-        if (claim != null && !claim.isAllowExplosions()) e.blockList().clear();
+        // Patlama koruması: Her bir blok için ayrı kontrol yapılmalı
+        // Patlamanın merkezi korumasız olabilir ama etkisi korumalı alana taşabilir
+        e.blockList().removeIf(block -> {
+            ClaimManager.Claim claim = claimManager.getClaimAt(block.getChunk());
+            return claim != null && !claim.isAllowExplosions();
+        });
     }
 
     @EventHandler(ignoreCancelled = true)
@@ -96,9 +106,23 @@ public class ProtectionListener implements Listener {
         if (e.getDamager() instanceof Player) attacker = (Player) e.getDamager();
         else if (e.getDamager() instanceof Projectile proj && proj.getShooter() instanceof Player) attacker = (Player) proj.getShooter();
         if (attacker == null) return;
-        Chunk c = victim.getLocation().getChunk();
-        ClaimManager.Claim claim = claimManager.getClaimAt(c);
-        if (claim != null && !claim.isAllowPvp()) e.setCancelled(true);
+        
+        // 1. Kurban güvenli bölgede mi?
+        Chunk victimChunk = victim.getLocation().getChunk();
+        ClaimManager.Claim victimClaim = claimManager.getClaimAt(victimChunk);
+        if (victimClaim != null && !victimClaim.isAllowPvp()) {
+            e.setCancelled(true);
+            return;
+        }
+
+        // 2. Saldırgan güvenli bölgede mi? (Safe-zone camping exploit fix)
+        Chunk attackerChunk = attacker.getLocation().getChunk();
+        ClaimManager.Claim attackerClaim = claimManager.getClaimAt(attackerChunk);
+        if (attackerClaim != null && !attackerClaim.isAllowPvp()) {
+            e.setCancelled(true);
+            // Mesaj sistemi entegrasyonu varsa mesaj gönderilebilir
+            // attacker.sendMessage(ChatColor.RED + "Güvenli bölgeden saldıramazsınız!");
+        }
     }
 
     private boolean isDoorLike(Material m) {

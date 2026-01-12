@@ -16,10 +16,16 @@ public class ClaimManager {
     }
 
     private void loadAll() {
+        // N+1 Fix: Tüm üyeleri tek sorguda çek
+        Map<String, List<String>> allMembers = db.fetchAllMembers();
+
         for (Database.DbClaim c : db.fetchAllClaims()) {
             Claim claim = new Claim(c.chunkKey, UUID.fromString(c.ownerUuid), c.world, c.x, c.z,
                     c.expiresAt, c.allowExplosions, c.allowPvp, c.allowInteract, c.allowOpenDoors, c.createdAt, c.claimName);
-            claim.getMembers().addAll(asUuids(db.fetchMembers(c.chunkKey)));
+            
+            if (allMembers.containsKey(c.chunkKey)) {
+                claim.getMembers().addAll(asUuids(allMembers.get(c.chunkKey)));
+            }
             
             // Advanced protection ayarları
             claim.setAllowMobSpawn(c.allowMobSpawn);
